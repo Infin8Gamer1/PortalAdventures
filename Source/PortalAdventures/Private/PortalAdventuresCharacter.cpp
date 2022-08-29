@@ -134,7 +134,7 @@ void APortalAdventuresCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * TurnRateGamepad * GetWorld()->GetDeltaSeconds());
 }
 
-void APortalAdventuresCharacter::GetTrajectory(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity)
+void APortalAdventuresCharacter::GetTrajectory_Implementation(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity)
 {
 	out_Location = GetActorLocation();
 	out_Rotation = GetActorRotation();
@@ -143,7 +143,7 @@ void APortalAdventuresCharacter::GetTrajectory(FVector& out_Location, FRotator& 
 	out_AngularVelocity = FVector::ZeroVector;
 }
 
-void APortalAdventuresCharacter::SetTrajectory(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity)
+void APortalAdventuresCharacter::SetTrajectory_Implementation(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity)
 {
 	FHitResult HitResult;
 	SetActorLocationAndRotation(Location, Rotation, false, &HitResult, ETeleportType::TeleportPhysics);
@@ -152,7 +152,7 @@ void APortalAdventuresCharacter::SetTrajectory(const FVector& Location, const FR
 	GetCharacterMovement()->Velocity = LinearVelocity;
 }
 
-void APortalAdventuresCharacter::SetCollisionResponse(ECollisionChannel Channel, ECollisionResponse Response)
+void APortalAdventuresCharacter::SetCollisionResponse_Implementation(ECollisionChannel Channel, ECollisionResponse Response)
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(Channel, Response);
 }

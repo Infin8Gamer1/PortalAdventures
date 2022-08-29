@@ -43,7 +43,7 @@ void APortalAdventuresProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* Ot
 	}
 }
 
-void APortalAdventuresProjectile::GetTrajectory(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity)
+void APortalAdventuresProjectile::GetTrajectory_Implementation(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity)
 {
 	out_Location = GetActorLocation();
 	out_Rotation = GetActorRotation();
@@ -52,7 +52,7 @@ void APortalAdventuresProjectile::GetTrajectory(FVector& out_Location, FRotator&
 	out_AngularVelocity = FVector::ZeroVector;
 }
 
-void APortalAdventuresProjectile::SetTrajectory(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity)
+void APortalAdventuresProjectile::SetTrajectory_Implementation(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity)
 {
 	FHitResult HitResult;
 	SetActorLocationAndRotation(Location, Rotation, false, &HitResult, ETeleportType::TeleportPhysics);
@@ -60,7 +60,7 @@ void APortalAdventuresProjectile::SetTrajectory(const FVector& Location, const F
 	GetProjectileMovement()->SetVelocityInLocalSpace(UKismetMathLibrary::InverseTransformDirection(GetTransform(), LinearVelocity));
 }
 
-void APortalAdventuresProjectile::SetCollisionResponse(ECollisionChannel Channel, ECollisionResponse Response)
+void APortalAdventuresProjectile::SetCollisionResponse_Implementation(ECollisionChannel Channel, ECollisionResponse Response)
 {
 	CollisionComp->SetCollisionResponseToChannel(Channel, Response);
 }

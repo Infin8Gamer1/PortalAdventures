@@ -129,10 +129,10 @@ public:
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
-	virtual void GetTrajectory(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity) override;
+	void GetTrajectory_Implementation(FVector& out_Location, FRotator& out_Rotation, FRotator& out_ControlRotation, FVector& out_LinearVelocity, FVector& out_AngularVelocity) override;
 
-	virtual void SetTrajectory(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity) override;
+	void SetTrajectory_Implementation(const FVector& Location, const FRotator& Rotation, const FRotator& ControlRotation, const FVector& LinearVelocity, const FVector& AngularVelocity) override;
 
-	virtual void SetCollisionResponse(ECollisionChannel Channel, ECollisionResponse Response) override;
+	void SetCollisionResponse_Implementation(ECollisionChannel Channel, ECollisionResponse Response) override;
 };
 
