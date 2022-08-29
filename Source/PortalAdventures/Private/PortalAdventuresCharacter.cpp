@@ -8,12 +8,16 @@
 #include "PortalAdventuresProjectile.h"
 #include "PortalAdventurePlayerController.h"
 
+#include "PuzzleElements/ObjectPickupComponent.h"
+
 #include "Animation/AnimInstance.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/InputSettings.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -43,6 +47,25 @@ APortalAdventuresCharacter::APortalAdventuresCharacter()
 	Mesh1P->SetRelativeRotation(FRotator(1.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-0.5f, -4.4f, -155.7f));
 
+	HeldObjectSlot = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HeldObjectSlot"));
+	HeldObjectSlot->SetupAttachment(FirstPersonCameraComponent);
+
+	GrabConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("GrabConstraint"));
+	GrabConstraint->SetupAttachment(HeldObjectSlot);
+	GrabConstraint->SetLinearXLimit(ELinearConstraintMotion::LCM_Free, 0.0f);
+	GrabConstraint->SetLinearYLimit(ELinearConstraintMotion::LCM_Free, 0.0f);
+	GrabConstraint->SetLinearZLimit(ELinearConstraintMotion::LCM_Free, 0.0f);
+	GrabConstraint->SetLinearPositionDrive(true, true, true);
+	GrabConstraint->SetLinearVelocityDrive(true, true, true);
+	GrabConstraint->SetLinearDriveParams(1000.0f, 100.0f, 0.0f);
+	GrabConstraint->SetAngularDriveMode(EAngularDriveMode::TwistAndSwing);
+	GrabConstraint->SetAngularOrientationDrive(true, true);
+	GrabConstraint->SetAngularVelocityDrive(true, true);
+	GrabConstraint->SetAngularDriveParams(1000.0f, 100.0f, 0.0f);
+
+	ObjectPickupComponent = CreateDefaultSubobject<UObjectPickupComponent>(TEXT("ObjectPickupComponent"));
+	ObjectPickupComponent->SetHeldObjectSlot(HeldObjectSlot);
+	ObjectPickupComponent->SetGrabConstraint(GrabConstraint);
 }
 
 void APortalAdventuresCharacter::BeginPlay()
@@ -69,11 +92,8 @@ void APortalAdventuresCharacter::SetupPlayerInputComponent(class UInputComponent
 	PlayerInputComponent->BindAction("FireRed", IE_Pressed, this, &APortalAdventuresCharacter::OnRedFire);
 
 	// Bind grab event
-	//PlayerInputComponent->BindAction("Grab", IE_Pressed, this, &APortalAdventuresCharacter::Grab);
+	PlayerInputComponent->BindAction("Grab", IE_Pressed, ObjectPickupComponent, &UObjectPickupComponent::GrabPressed);
 	//PlayerInputComponent->BindAction("Grab", IE_Released, this, &APortalAdventuresCharacter::Drop);
-
-	// Enable touchscreen input
-	//EnableTouchscreenMovement(PlayerInputComponent);
 
 	// Bind movement events
 	PlayerInputComponent->BindAxis("Move Forward / Backward", this, &APortalAdventuresCharacter::MoveForward);
@@ -156,46 +176,3 @@ void APortalAdventuresCharacter::SetCollisionResponse_Implementation(ECollisionC
 {
 	GetCapsuleComponent()->SetCollisionResponseToChannel(Channel, Response);
 }
-
-/*
-* 
-* Touch Screen Controls and things
-* 
-void APortalAdventuresCharacter::BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	if (TouchItem.bIsPressed == true)
-	{
-		return;
-	}
-	if ((FingerIndex == TouchItem.FingerIndex) && (TouchItem.bMoved == false))
-	{
-		OnFire();
-	}
-	TouchItem.bIsPressed = true;
-	TouchItem.FingerIndex = FingerIndex;
-	TouchItem.Location = Location;
-	TouchItem.bMoved = false;
-}
-
-void APortalAdventuresCharacter::EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	if (TouchItem.bIsPressed == false)
-	{
-		return;
-	}
-	TouchItem.bIsPressed = false;
-}
-
-bool APortalAdventuresCharacter::EnableTouchscreenMovement(class UInputComponent* PlayerInputComponent)
-{
-	if (FPlatformMisc::SupportsTouchInput() || GetDefault<UInputSettings>()->bUseMouseForTouch)
-	{
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Pressed, this, &APortalAdventuresCharacter::BeginTouch);
-		PlayerInputComponent->BindTouch(EInputEvent::IE_Released, this, &APortalAdventuresCharacter::EndTouch);
-
-		return true;
-	}
-	
-	return false;
-}
-*/
